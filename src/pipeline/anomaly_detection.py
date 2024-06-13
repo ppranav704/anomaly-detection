@@ -6,15 +6,15 @@ def detect_anomalies(reconstruction_errors, threshold):
 
 def main():
     # Load reconstruction errors from the stored file
-    with open(r'D:\Projects\dlproject\src\pipeline\reconstruction_errors.txt', 'r') as f:
+    with open(r'\anomaly_detection\src\pipeline\reconstruction_errors.txt', 'r') as f:
         reconstruction_errors = [float(line.strip()) for line in f]
 
     # Load sentences from the stored file
-    with open(r'D:\Projects\dlproject\notebook\data\messages.txt', 'r', encoding='utf-8') as f:
+    with open(r'\anomaly_detection\data\messages.txt', 'r', encoding='utf-8') as f:
         sentences = [line.strip() for line in f]
 
     # Set a threshold for anomaly detection
-    threshold = 365.04
+    threshold = 1375
 
     # Detect anomalies
     anomaly_indices = detect_anomalies(reconstruction_errors, threshold)

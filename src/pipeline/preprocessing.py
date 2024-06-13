@@ -25,6 +25,6 @@ def train_fasttext_model(input_file, output_model_path, dim=300, minn=2, maxn=5,
     #print("Dimensions of the saved model:", model.get_dimension())
     
 if __name__ == "__main__":
-    input_file = r'D:\Projects\dlproject\notebook\data\messages1.txt'
-    output_model_path = r'D:\Projects\dlproject\src\pipeline\model_messages.bin'
+    input_file = r'\anomaly_detection\data\messages1.txt'
+    output_model_path = r'\anomaly_detection\src\pipeline\model_messages.bin'
     train_fasttext_model(input_file, output_model_path)
