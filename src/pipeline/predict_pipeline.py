@@ -70,7 +70,7 @@ def loss_function(recon_x, x, mu, logvar):
 
 
 # Load pre-trained FastText model
-model_fasttext = fasttext.load_model(r"D:\Projects\dlproject\src\pipeline\model_messages.bin")
+model_fasttext = fasttext.load_model(r"\anomaly_detection\src\pipeline\model_messages.bin")
 
 # Load sentences from a text file
 def load_sentences(file_path):
@@ -83,13 +83,13 @@ def get_sentence_vector(sentence):
     return model_fasttext.get_sentence_vector(sentence)
 
 # Load inference information
-inference_info = torch.load(r'D:\Projects\dlproject\src\pipeline\inference_info.pth')  
+inference_info = torch.load(r'\anomaly_detection\src\pipeline\inference_info.pth')  
 scaler_info = inference_info['scaler']
 input_size = inference_info['input_size']
 latent_size = inference_info['latent_size']
 
 # Example: Load sentences from a text file
-file_path = r'D:\Projects\dlproject\notebook\data\messages.txt'  
+file_path = r'\anomaly_detection\data\messages.txt'  
 sentences = load_sentences(file_path)
 
 # Convert the sentences to vectors using FastText
@@ -111,7 +111,7 @@ inference_dataloader = DataLoader(inference_dataset, batch_size=batch_size, shuf
 
 # Load the model
 model_vae = VAE(input_size=input_size, latent_size=latent_size)
-model_vae.load_state_dict(torch.load(r'D:\Projects\dlproject\src\pipeline\model.pth'))
+model_vae.load_state_dict(torch.load(r'\anomaly_detection\src\pipeline\model.pth'))
 
 # Lists to store reconstruction errors
 reconstruction_errors = []
@@ -128,7 +128,7 @@ with torch.no_grad():
             reconstruction_errors.append(loss.item())
 
 # Save the reconstruction errors to a text file
-with open(r'D:\Projects\dlproject\src\pipeline\reconstruction_errors.txt', 'w') as f:
+with open(r'\anomaly_detection\src\pipeline\reconstruction_errors.txt', 'w') as f:
     for error in reconstruction_errors:
         f.write(str(error) + '\n')
         

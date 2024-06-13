@@ -70,10 +70,10 @@ def loss_function(recon_x, x, mu, logvar):
     return reconstruction_loss + kl_divergence
 
 # Load pre-trained FastText model
-model_fasttext = fasttext.load_model(r"D:\Projects\dlproject\src\pipeline\fasttext_model.bin")
+model_fasttext = fasttext.load_model(r"\anomaly_detection\src\pipeline\fasttext_model.bin")
 
 # Load inference information
-inference_info = torch.load(r'D:\Projects\dlproject\src\pipeline\inference_info2.pth')  
+inference_info = torch.load(r'\anomaly_detection\src\pipeline\inference_info.pth')  
 scaler_info = inference_info['scaler']
 input_size = inference_info['input_size']
 latent_size = inference_info['latent_size']
@@ -89,7 +89,7 @@ def get_sentence_vector(sentences, model_fasttext):
     return np.array([model_fasttext.get_sentence_vector(sentence) for sentence in sentences])
 
 # Example: Load sentences from a text file
-file_path = r'D:\Projects\dlproject\notebook\data\messages.txt'  
+file_path = r'\anomaly_detection\data\messages.txt'  
 sentences = load_sentences(file_path)
 
 # Convert the sentences to vectors using FastText
@@ -107,7 +107,7 @@ x_inference_tensor = torch.tensor(x_data, dtype=torch.float32)
 
 # Load VAE model
 model_vae = VAE(input_size, latent_size)
-model_vae.load_state_dict(torch.load(r'D:\Projects\dlproject\src\pipeline\model2.pth'))
+model_vae.load_state_dict(torch.load(r'\anomaly_detection\src\pipeline\model.pth'))
 model_vae.eval()
 
 @app.get("/live_predict/")
@@ -117,7 +117,7 @@ async def live_predict():
     anomaly_count = 0
     non_anomaly_count = 0
 
-    async with aiofiles.open(r"D:\Projects\dlproject\notebook\data\messages.txt", "r") as file:
+    async with aiofiles.open(r"\anomaly_detection\data\messages.txt", "r") as file:
         async for line in file:
             sentence = line.strip()
 
