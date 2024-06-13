@@ -1,0 +1,1 @@
+Dec 10 03:47:06 MH-P1-E-R10-PSW1 chassism[1181]: Error(2):I2C read of EEPROM failed for Port 4 at offset 0x1
