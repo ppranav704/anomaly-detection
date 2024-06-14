@@ -17,37 +17,37 @@
 This project implements an anomaly detection system for unstructured streaming logs using a Variational Autoencoder (VAE). The system preprocesses the raw logs to generate embeddings using FastText, and then detects anomalies based on reconstruction errors.
 
 ## Project Structure
-ANOMALY_DETECTION
-├── dlproject.egg-info/
-├── data/
-├── src/
-│   ├── pipeline/
-│   │   ├── anomaly_detection/
-│   │   ├── __pycache__/
-│   │   ├── anomaly_detection.py
-│   │   ├── app.py
-│   │   ├── fasttext_model.bin
-│   │   ├── inference_info.pth
-│   │   ├── inference_info_bert.pth
-│   │   ├── model.pth
-│   │   ├── modelbert.pth
-│   │   ├── predict_pipeline.py
-│   │   ├── preprocessing.py
-│   │   ├── pretrained_bert_embeddings.npy
-│   │   ├── reconstruction_errors.txt
-│   │   ├── validation_set.pth
-│   │   ├── validation_set_bert.pth
-│   │   ├── __init__.py
-│   ├── app1.py
-│   ├── exception.py
-│   ├── logger.py
-│   ├── __init__.py
-├── venv/
-├── .gitattributes
-├── .gitignore
-├── README.md
-├── requirements.txt
-├── setup.py
+    ANOMALY_DETECTION
+    ├── dlproject.egg-info/
+    ├── data/
+    ├── src/
+    │   ├── pipeline/
+    │   │   ├── anomaly_detection/
+    │   │   ├── __pycache__/
+    │   │   ├── anomaly_detection.py
+    │   │   ├── app.py
+    │   │   ├── fasttext_model.bin
+    │   │   ├── inference_info.pth
+    │   │   ├── inference_info_bert.pth
+    │   │   ├── model.pth
+    │   │   ├── modelbert.pth
+    │   │   ├── predict_pipeline.py
+    │   │   ├── preprocessing.py
+    │   │   ├── pretrained_bert_embeddings.npy
+    │   │   ├── reconstruction_errors.txt
+    │   │   ├── validation_set.pth
+    │   │   ├── validation_set_bert.pth
+    │   │   ├── __init__.py
+    │   ├── app1.py
+    │   ├── exception.py
+    │   ├── logger.py
+    │   ├── __init__.py
+    ├── venv/
+    ├── .gitattributes
+    ├── .gitignore
+    ├── README.md
+    ├── requirements.txt
+    ├── setup.py
 
 
 
