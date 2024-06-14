@@ -91,12 +91,22 @@ This project implements an anomaly detection system for unstructured streaming l
 
    'python src/pipeline/anomaly_detection.py'
 
-## FastAPI Application
-   The app1.py script in the src directory is a FastAPI application for single message anomaly detection.
 
-   To run the FastAPI application:
+## FastAPI Applications
+**Single Sample Anomaly Detection**
+  The app1.py script in the src directory is a FastAPI application for single sample anomaly detection.
+
+  To run the FastAPI application for single sample detection:
 
    'uvicorn src.app1:app --reload'
+
+**Multiple Samples Anomaly Detection**
+  The app.py script in the src/pipeline directory is a FastAPI application for 10025 samples anomaly detection.
+
+  To run the FastAPI application for multiple samples detection:
+
+   'uvicorn src.pipeline.app:app --reload'
+
 
 ## Scripts Description
 **Preprocessing**
