@@ -21,33 +21,34 @@ ANOMALY_DETECTION
 ├── dlproject.egg-info/
 ├── data/
 ├── src/
-│ ├── pipeline/
-│ │ ├── anomaly_detection/
-│ │ ├── pycache/
-│ │ ├── anomaly_detection.py
-│ │ ├── app.py
-│ │ ├── fasttext_model.bin
-│ │ ├── inference_info.pth
-│ │ ├── inference_info_bert.pth
-│ │ ├── model.pth
-│ │ ├── modelbert.pth
-│ │ ├── predict_pipeline.py
-│ │ ├── preprocessing.py
-│ │ ├── pretrained_bert_embeddings.npy
-│ │ ├── reconstruction_errors.txt
-│ │ ├── validation_set.pth
-│ │ ├── validation_set_bert.pth
-│ │ ├── init.py
-│ ├── app1.py
-│ ├── exception.py
-│ ├── logger.py
-│ ├── init.py
+│   ├── pipeline/
+│   │   ├── anomaly_detection/
+│   │   ├── __pycache__/
+│   │   ├── anomaly_detection.py
+│   │   ├── app.py
+│   │   ├── fasttext_model.bin
+│   │   ├── inference_info.pth
+│   │   ├── inference_info_bert.pth
+│   │   ├── model.pth
+│   │   ├── modelbert.pth
+│   │   ├── predict_pipeline.py
+│   │   ├── preprocessing.py
+│   │   ├── pretrained_bert_embeddings.npy
+│   │   ├── reconstruction_errors.txt
+│   │   ├── validation_set.pth
+│   │   ├── validation_set_bert.pth
+│   │   ├── __init__.py
+│   ├── app1.py
+│   ├── exception.py
+│   ├── logger.py
+│   ├── __init__.py
 ├── venv/
 ├── .gitattributes
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
 ├── setup.py
+
 
 
 
