@@ -56,36 +56,37 @@ This project implements an anomaly detection system for unstructured streaming l
 
 1. **Clone the repository:**
    
-   git clone https://gitlab360.enlight.dev/ppranav704/anomaly_detection.git
-   cd anomaly_detection
+   'git clone https://gitlab360.enlight.dev/ppranav704/anomaly_detection.git'
+
+   'cd anomaly_detection'
 
 
-2. Create a virtual environment:
+2. **Create a virtual environment:**
 
    'conda create -p venv python==3.10 -y'
 
-3. Activate the virtual environment:
+3. **Activate the virtual environment:**
 
    'conda activate \anomaly_detection\venv'
 
-4. Install the required packages:
+4. **Install the required packages:**
 
    'pip install -r requirements.txt'
 
 
 ## Usage
 
-1. Preprocessing
+1. **Preprocessing**
    Run the preprocessing.py script to convert raw data into FastText embeddings using the CBOW model.
 
    'python src/pipeline/preprocessing.py'
 
-2. Prediction Pipeline
+2. **Prediction Pipeline**
    Run the predict_pipeline.py script to generate results and store reconstruction errors.
 
    'python src/pipeline/predict_pipeline.py'
 
-3. Anomaly Detection
+3. **Anomaly Detection**
    Run the anomaly_detection.py script to detect anomalies based on the set threshold.
 
    'python src/pipeline/anomaly_detection.py'
@@ -98,28 +99,28 @@ This project implements an anomaly detection system for unstructured streaming l
    'uvicorn src.app1:app --reload'
 
 ## Scripts Description
-Preprocessing
+**Preprocessing**
  'preprocessing.py':
 
     - Converts raw data into FastText embeddings using the CBOW model.
     - Stores the embeddings for further processing.
 
-Prediction Pipeline
+**Prediction Pipeline**
  'predict_pipeline.py':
 
     - Generates results and stores reconstruction errors in a text file (reconstruction_errors.txt).
 
-Anomaly Detection
+**Anomaly Detection**
  'anomaly_detection.py':
 
     - Prints detected anomalies based on a set threshold of reconstruction errors.
 
 ## Requirements
-All required Python packages are listed in requirements.txt. Install them using:
+ All required Python packages are listed in requirements.txt. Install them using:
 
  'pip install -r requirements.txt'
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+ This project is licensed under the MIT License. See the LICENSE file for details.
 
    
