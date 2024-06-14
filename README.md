@@ -77,16 +77,19 @@ This project implements an anomaly detection system for unstructured streaming l
 ## Usage
 
 1. **Preprocessing**
+
    Run the preprocessing.py script to convert raw data into FastText embeddings using the CBOW model.
 
    'python src/pipeline/preprocessing.py'
 
 2. **Prediction Pipeline**
+
    Run the predict_pipeline.py script to generate results and store reconstruction errors.
 
    'python src/pipeline/predict_pipeline.py'
 
 3. **Anomaly Detection**
+
    Run the anomaly_detection.py script to detect anomalies based on the set threshold.
 
    'python src/pipeline/anomaly_detection.py'
@@ -94,6 +97,7 @@ This project implements an anomaly detection system for unstructured streaming l
 
 ## FastAPI Applications
 **Single Sample Anomaly Detection**
+  
   The app1.py script in the src directory is a FastAPI application for single sample anomaly detection.
 
   To run the FastAPI application for single sample detection:
@@ -101,6 +105,7 @@ This project implements an anomaly detection system for unstructured streaming l
    'uvicorn src.app1:app --reload'
 
 **Multiple Samples Anomaly Detection**
+
   The app.py script in the src/pipeline directory is a FastAPI application for 10025 samples anomaly detection.
 
   To run the FastAPI application for multiple samples detection:
@@ -110,17 +115,20 @@ This project implements an anomaly detection system for unstructured streaming l
 
 ## Scripts Description
 **Preprocessing**
+
  'preprocessing.py':
 
     - Converts raw data into FastText embeddings using the CBOW model.
     - Stores the embeddings for further processing.
 
 **Prediction Pipeline**
+
  'predict_pipeline.py':
 
     - Generates results and stores reconstruction errors in a text file (reconstruction_errors.txt).
 
 **Anomaly Detection**
+
  'anomaly_detection.py':
 
     - Prints detected anomalies based on a set threshold of reconstruction errors.
