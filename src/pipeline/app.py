@@ -1,14 +1,31 @@
-from fastapi import FastAPI
 import time
 import torch
 import torch.nn as nn
 import numpy as np
 import fasttext
 from sklearn.preprocessing import StandardScaler
+from fastapi import FastAPI, HTTPException
 import aiofiles
+import logging
+import os
 
+# Initialize the FastAPI app
 app = FastAPI()
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Configuration parameters
+CONFIG = {
+    "fasttext_model_path": "src/pipeline/fasttext_model.bin",
+    "inference_info_path": "src/pipeline/inference_info2.pth",
+    "model_path": "src/pipeline/model.pth",
+    "data_file_path": "/data/messages.txt",
+    "anomaly_threshold": 1375
+}
+
+# Variational Autoencoder model definition
 class VAE(nn.Module):
     def __init__(self, input_size, latent_size):
         super(VAE, self).__init__()
@@ -16,14 +33,12 @@ class VAE(nn.Module):
         # Encoder
         self.fc1 = nn.Linear(input_size, 256)
         self.norm1 = nn.LayerNorm(256, eps=1e-12, elementwise_affine=True)
-
         self.fc21 = nn.Linear(256, latent_size)
         self.fc22 = nn.Linear(256, latent_size)
 
         # Decoder
         self.fc3 = nn.Linear(latent_size, 256)
         self.norm2 = nn.LayerNorm(256, eps=1e-12, elementwise_affine=True)
-
         self.fc4 = nn.Linear(256, input_size)
 
         # PReLU activations
@@ -63,113 +78,79 @@ class VAE(nn.Module):
 def loss_function(recon_x, x, mu, logvar):
     MSE = nn.MSELoss(reduction='sum')
     reconstruction_loss = MSE(recon_x, x)
-
-    # KL divergence
     kl_divergence = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-
     return reconstruction_loss + kl_divergence
 
 # Load pre-trained FastText model
-model_fasttext = fasttext.load_model(r"\anomaly_detection\src\pipeline\fasttext_model.bin")
+model_fasttext = fasttext.load_model(CONFIG["fasttext_model_path"])
 
 # Load inference information
-inference_info = torch.load(r'\anomaly_detection\src\pipeline\inference_info.pth')  
+inference_info = torch.load(CONFIG["inference_info_path"])
 scaler_info = inference_info['scaler']
 input_size = inference_info['input_size']
 latent_size = inference_info['latent_size']
 
-# Load sentences from a text file
-def load_sentences(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        sentences = [line.strip() for line in file]
-    return sentences
-
-# Convert the sentences to vectors using FastText
-def get_sentence_vector(sentences, model_fasttext):
-    return np.array([model_fasttext.get_sentence_vector(sentence) for sentence in sentences])
-
-# Example: Load sentences from a text file
-file_path = r'\anomaly_detection\data\messages.txt'  
-sentences = load_sentences(file_path)
-
-# Convert the sentences to vectors using FastText
-log_vectors = get_sentence_vector(sentences, model_fasttext)
+# Load VAE model
+model_vae = VAE(input_size, latent_size)
+model_vae.load_state_dict(torch.load(CONFIG["model_path"]))
+model_vae.eval()
 
 # Standardize the data using the previously saved scaler
 scaler = StandardScaler()
-scaler.partial_fit(log_vectors)
+scaler.partial_fit(scaler_info)
 
-# Transform the data using the fitted scaler
-x_data = scaler.transform(log_vectors)
+# Load sentences from a text file
+async def load_sentences(file_path):
+    sentences = []
+    async with aiofiles.open(file_path, 'r', encoding='utf-8') as file:
+        async for line in file:
+            sentences.append(line.strip())
+    return sentences
 
-# Convert the NumPy array to PyTorch tensor
-x_inference_tensor = torch.tensor(x_data, dtype=torch.float32)
-
-# Load VAE model
-model_vae = VAE(input_size, latent_size)
-model_vae.load_state_dict(torch.load(r'\anomaly_detection\src\pipeline\model.pth'))
-model_vae.eval()
+# Convert sentences to vectors using FastText
+def get_sentence_vector(sentences, model_fasttext):
+    return np.array([model_fasttext.get_sentence_vector(sentence) for sentence in sentences])
 
 @app.get("/live_predict/")
 async def live_predict():
-    anomalies = []  # List to store anomaly results
-    non_anomalies = []  # List to store non-anomaly results
+    try:
+        sentences = await load_sentences(CONFIG["data_file_path"])
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Data file not found")
+
+    log_vectors = get_sentence_vector(sentences, model_fasttext)
+    x_data = scaler.transform(log_vectors)
+    x_inference_tensor = torch.tensor(x_data, dtype=torch.float32)
+
+    anomalies = []
+    non_anomalies = []
     anomaly_count = 0
     non_anomaly_count = 0
 
-    async with aiofiles.open(r"\anomaly_detection\data\messages.txt", "r") as file:
-        async for line in file:
-            sentence = line.strip()
+    for sentence, log_vector in zip(sentences, x_inference_tensor):
+        try:
+            start_time = time.time()
+            x_inference_tensor = torch.tensor([log_vector], dtype=torch.float32)
+            with torch.no_grad():
+                recon_sample, mu, logvar = model_vae(x_inference_tensor)
+                reconstruction_error = loss_function(recon_sample, x_inference_tensor, mu, logvar).item()
 
-            try:
-                start_time = time.time()  # Record start time
+            is_anomaly = reconstruction_error > CONFIG["anomaly_threshold"]
+            result = {
+                "sentence": sentence,
+                "reconstruction_error": reconstruction_error,
+                "anomaly": is_anomaly,
+                "execution_time": time.time() - start_time
+            }
 
-                # Convert sentence to vector using FastText
-                log_vector = model_fasttext.get_sentence_vector(sentence)
-
-                # Transform the data using the fitted scaler
-                x_data = scaler.transform(np.array([log_vector]))
-
-                # Convert to PyTorch tensor
-                x_inference_tensor = torch.tensor(x_data, dtype=torch.float32)
-
-                # Perform inference
-                model_vae.eval()
-                with torch.no_grad():
-                    recon_sample, mu, logvar = model_vae(x_inference_tensor)
-                    reconstruction_error = loss_function(recon_sample, x_inference_tensor, mu, logvar).item()
-
-                # Check if reconstruction error exceeds threshold
-                threshold = 1375
-                is_anomaly = reconstruction_error > threshold
-
-                # Create result dictionary
-                result = {
-                    "sentence": sentence,
-                    "reconstruction_error": reconstruction_error,
-                    "anomaly": is_anomaly,
-                    "execution_time": time.time() - start_time  # Calculate execution time
-                }
-
-                # Append result to the appropriate list
-                if is_anomaly:
-                    anomalies.append(result)
-                    anomaly_count += 1
-                else:
-                    non_anomalies.append(result)
-                    non_anomaly_count += 1
-
-            except Exception as e:
-                print(f"Error processing sentence: {sentence}\nError: {e}")
-
-    # Print anomalies and non-anomalies
-    print("Anomalies:")
-    for anomaly in anomalies:
-        print(anomaly)
-
-    print("Non-Anomalies:")
-    for non_anomaly in non_anomalies:
-        print(non_anomaly)
+            if is_anomaly:
+                anomalies.append(result)
+                anomaly_count += 1
+            else:
+                non_anomalies.append(result)
+                non_anomaly_count += 1
+        except Exception as e:
+            logger.error(f"Error processing sentence: {sentence}\nError: {e}")
 
     response = {
         "anomalies": anomalies,
@@ -177,10 +158,9 @@ async def live_predict():
         "anomaly_count": anomaly_count,
         "non_anomaly_count": non_anomaly_count
     }
-
+    
     return response
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=9030)
-
