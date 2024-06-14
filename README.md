@@ -56,8 +56,8 @@ This project implements an anomaly detection system for unstructured streaming l
 
 1. **Clone the repository:**
    
-   git clone https://github.com/yourusername/dlproject.git
-   cd dlproject
+   git clone https://gitlab360.enlight.dev/ppranav704/anomaly_detection.git
+   cd anomaly_detection
 
 
 2. Create a virtual environment:
